@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,7 +42,7 @@ const UserProfilePage = () => {
       setConfirmNewPassword('');
     } catch (error) {
       console.error('Failed to change password:', error);
-      // toast.error is handled by the api utility, so no need to call it here again.
+      // toast.error is handled by the api utility
     } finally {
       setLoading(false);
     }
@@ -111,6 +111,11 @@ const UserProfilePage = () => {
               {loading ? 'Updating...' : 'Change Password'}
             </Button>
           </form>
+          <div className="mt-6">
+            <Link to="/">
+              <Button variant="outline" className="w-full">Back to Home</Button>
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

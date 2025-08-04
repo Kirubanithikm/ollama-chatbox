@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom'; // Import Link
 
 interface User {
   _id: string;
@@ -97,8 +98,11 @@ const AdminDashboard = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex flex-row justify-between items-center">
         <CardTitle>User Management</CardTitle>
+        <Link to="/">
+          <Button variant="outline">Back to Home</Button>
+        </Link>
       </CardHeader>
       <CardContent>
         <Table>
