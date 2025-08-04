@@ -4,16 +4,14 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { useTheme } from "next-themes";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Loader2 } from "lucide-react";
+import Header from "@/components/Header"; // Import the new Header component
 
 interface Message {
   sender: 'user' | 'ai';
@@ -22,8 +20,8 @@ interface Message {
 }
 
 const Index = () => {
-  const { user, logout, token } = useAuth();
-  const navigate = useNavigate();
+  const { token } = useAuth(); // Only need token here, user/logout handled by Header
+  const navigate = useNavigate(); // Still needed for potential redirects if token is missing
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,12 +29,6 @@ const Index = () => {
   const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null); // Ref for the input field
-  const { theme, setTheme } = useTheme();
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -55,7 +47,10 @@ const Index = () => {
 
   useEffect(() => {
     const fetchChatHistoryAndModels = async () => {
-      if (!token) return;
+      if (!token) {
+        navigate('/login'); // Redirect if no token
+        return;
+      }
       setIsLoading(true);
       try {
         // Fetch chat history
@@ -88,7 +83,7 @@ const Index = () => {
     };
 
     fetchChatHistoryAndModels();
-  }, [token]);
+  }, [token, navigate]); // Added navigate to dependency array
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,31 +140,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Ollama Chat</h1>
-        <div className="flex items-center space-x-4">
-          <span className="text-gray-600 dark:text-gray-300">Welcome, {user?.username}!</span>
-          {(user?.role === 'admin' || user?.role === 'super_admin') && (
-            <Link to="/admin">
-              <Button variant="outline">Admin Dashboard</Button>
-            </Link>
-          )}
-          <Link to="/profile">
-            <Button variant="outline">Profile</Button>
-          </Link>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="dark-mode"
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
-          </div>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
-          </Button>
-        </div>
-      </header>
+      <Header /> {/* Use the new Header component */}
 
       <main className="flex-1 flex flex-col p-4 overflow-hidden">
         <div className="flex justify-between items-center mb-4">
