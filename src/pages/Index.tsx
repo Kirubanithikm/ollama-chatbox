@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy } from "lucide-react"; // Import Copy icon
 
 interface Message {
   sender: 'user' | 'ai';
@@ -136,6 +136,12 @@ const Index = () => {
     toast.info('Started a new chat session.');
   };
 
+  const handleCopyMessage = (text: string) => {
+    navigator.clipboard.writeText(text)
+      .then(() => toast.success('Copied to clipboard!'))
+      .catch(() => toast.error('Failed to copy text.'));
+  };
+
   return (
     <>
       <div className="flex justify-between items-center mb-4">
@@ -192,9 +198,20 @@ const Index = () => {
                   {msg.sender === 'user' ? (
                     msg.text
                   ) : (
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                      {msg.text}
-                    </ReactMarkdown>
+                    <div className="flex flex-col">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.text}
+                      </ReactMarkdown>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="self-end mt-2 h-auto p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                        onClick={() => handleCopyMessage(msg.text)}
+                        title="Copy message"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
                   )}
                 </div>
                 <span className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-gray-600 dark:text-gray-400 mr-1' : 'text-gray-500 dark:text-gray-400 ml-1'}`}>
