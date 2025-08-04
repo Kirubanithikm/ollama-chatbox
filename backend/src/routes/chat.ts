@@ -95,4 +95,25 @@ router.get('/history', auth, async (req: Request, res: Response) => {
   }
 });
 
+// Get available Ollama models
+router.get('/models', auth, async (req: Request, res: Response) => {
+  const ollamaApiUrl = process.env.OLLAMA_API_URL || 'http://localhost:11434/api/tags'; // Ollama API endpoint for models
+
+  try {
+    const response = await fetch(ollamaApiUrl);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Ollama API models error:', errorText);
+      return res.status(response.status).json({ message: `Failed to fetch models from Ollama: ${errorText}` });
+    }
+    const data = await response.json();
+    // Ollama /api/tags returns { models: [{ name: "model:tag", ... }] }
+    const models = data.models.map((m: { name: string }) => m.name);
+    res.json({ models });
+  } catch (error: any) {
+    console.error('Error fetching Ollama models:', error.message);
+    res.status(500).json({ message: 'Failed to fetch Ollama models' });
+  }
+});
+
 export default router;

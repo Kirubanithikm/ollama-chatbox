@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface Message {
   sender: 'user' | 'ai';
@@ -20,6 +21,8 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [availableModels, setAvailableModels] = useState<string[]>([]);
+  const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
@@ -36,25 +39,41 @@ const Index = () => {
   }, [messages]);
 
   useEffect(() => {
-    const fetchChatHistory = async () => {
+    const fetchChatHistoryAndModels = async () => {
       if (!token) return;
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const data = await api('/chat/history', {
+        // Fetch chat history
+        const historyData = await api('/chat/history', {
           method: 'GET',
           token: token,
         });
-        setMessages(data.messages);
+        setMessages(historyData.messages);
+
+        // Fetch available models
+        const modelsData = await api('/chat/models', {
+          method: 'GET',
+          token: token,
+        });
+        if (modelsData.models && modelsData.models.length > 0) {
+          setAvailableModels(modelsData.models);
+          // Set default model to the first available if 'llama2' is not present
+          if (!modelsData.models.includes('llama2')) {
+            setSelectedModel(modelsData.models[0]);
+          }
+        } else {
+          toast.info('No Ollama models found. Please ensure Ollama is running and models are downloaded.');
+        }
       } catch (error) {
-        console.error('Error fetching chat history:', error);
-        toast.error('Failed to load chat history.');
+        console.error('Error fetching data:', error);
+        toast.error('Failed to load chat history or models.');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchChatHistory();
-  }, [token]); // Fetch history when token changes (on login)
+    fetchChatHistoryAndModels();
+  }, [token]); // Fetch history and models when token changes (on login)
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +90,7 @@ const Index = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: userMessage.text, model: 'llama2' }),
+        body: JSON.stringify({ prompt: userMessage.text, model: selectedModel }), // Use selected model
         token: token || undefined,
       });
 
@@ -97,7 +116,7 @@ const Index = () => {
               <Button variant="outline">Admin Dashboard</Button>
             </Link>
           )}
-          <Link to="/profile"> {/* Add link to User Profile */}
+          <Link to="/profile">
             <Button variant="outline">Profile</Button>
           </Link>
           <Button onClick={handleLogout} variant="outline">
@@ -107,11 +126,30 @@ const Index = () => {
       </header>
 
       <main className="flex-1 flex flex-col p-4 overflow-hidden">
+        <div className="flex justify-end mb-4">
+          <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select Model" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableModels.length > 0 ? (
+                availableModels.map((modelName) => (
+                  <SelectItem key={modelName} value={modelName}>
+                    {modelName}
+                  </SelectItem>
+                ))
+              ) : (
+                <SelectItem value="no-models" disabled>No models available</SelectItem>
+              )}
+            </SelectContent>
+          </Select>
+        </div>
+
         <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">
           <div className="flex flex-col space-y-4">
             {isLoading && messages.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
-                Loading chat history...
+                Loading chat history and models...
               </div>
             ) : messages.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -135,7 +173,7 @@ const Index = () => {
                 </div>
               ))
             )}
-            {isLoading && messages.length > 0 && ( // Show typing indicator only when sending new message
+            {isLoading && messages.length > 0 && (
               <div className="flex justify-start">
                 <div className="max-w-[70%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
                   Typing...
@@ -153,9 +191,9 @@ const Index = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             className="flex-1"
-            disabled={isLoading}
+            disabled={isLoading || availableModels.length === 0}
           />
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading || availableModels.length === 0}>
             Send
           </Button>
         </form>
