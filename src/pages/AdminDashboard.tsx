@@ -30,8 +30,8 @@ const AdminDashboard = () => {
         });
         setUsers(data);
       } catch (err: any) {
+        // toast.error is handled by the api utility
         setError(err.message || 'Failed to fetch users.');
-        toast.error(err.message || 'Failed to fetch users.');
       } finally {
         setLoading(false);
       }
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
       );
       toast.success(`User role updated to ${newRole}`);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update user role.');
+      // toast.error is handled by the api utility
     }
   };
 
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
         setUsers(prevUsers => prevUsers.filter(u => u._id !== userId));
         toast.success('User deleted successfully');
       } catch (err: any) {
-        toast.error(err.message || 'Failed to delete user.');
+        // toast.error is handled by the api utility
       }
     }
   };
