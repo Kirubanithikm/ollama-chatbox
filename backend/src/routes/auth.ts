@@ -37,7 +37,15 @@ router.post('/register', async (req: Request, res: Response) => {
       { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;
-        res.status(201).json({ token, message: 'User registered successfully' });
+        res.status(201).json({ 
+          token, 
+          message: 'User registered successfully',
+          user: { // Include user details in the response
+            id: user.id,
+            username: user.username,
+            role: user.role,
+          }
+        });
       }
     );
   } catch (err: any) {
