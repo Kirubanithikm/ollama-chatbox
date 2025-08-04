@@ -12,6 +12,21 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// --- Environment Variable Checks ---
+if (!process.env.MONGO_URI) {
+  console.error('FATAL ERROR: MONGO_URI is not defined. Please set this environment variable.');
+  process.exit(1);
+}
+if (!process.env.JWT_SECRET) {
+  console.error('FATAL ERROR: JWT_SECRET is not defined. Please set this environment variable.');
+  process.exit(1);
+}
+if (!process.env.OLLAMA_API_URL) {
+  console.error('FATAL ERROR: OLLAMA_API_URL is not defined. Please set this environment variable (e.g., http://localhost:11434).');
+  process.exit(1);
+}
+// --- End Environment Variable Checks ---
+
 // Connect to MongoDB
 connectDB();
 
