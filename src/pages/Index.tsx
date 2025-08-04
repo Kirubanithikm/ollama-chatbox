@@ -7,9 +7,8 @@ import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Loader2, Copy, ChevronDown, ChevronUp } from "lucide-react"; // Import Chevron icons
+import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import ChatMessage from "@/components/ChatMessage"; // Import the new ChatMessage component
 
 interface Message {
   sender: 'user' | 'ai';
@@ -23,13 +22,13 @@ const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true); // New state for initial load
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
-  const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
-  const [ollamaError, setOllamaError] = useState<string | null>(null); // State for Ollama specific errors
-  const [showOllamaErrorDetails, setShowOllamaErrorDetails] = useState(false); // New state for error details visibility
+  const [selectedModel, setSelectedModel] = useState<string>('llama2');
+  const [ollamaError, setOllamaError] = useState<string | null>(null);
+  const [showOllamaErrorDetails, setShowOllamaErrorDetails] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null); // Ref for the input field
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,37 +38,33 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Effect to focus the input field
   useEffect(() => {
-    if (inputRef.current && !isLoading && !isInitialLoading) { // Only focus if not loading at all
+    if (inputRef.current && !isLoading && !isInitialLoading) {
       inputRef.current.focus();
     }
-  }, [isLoading, isInitialLoading, messages]); // Focus when loading stops or messages change (after sending)
+  }, [isLoading, isInitialLoading, messages]);
 
   useEffect(() => {
     const fetchChatHistoryAndModels = async () => {
       if (!token) {
-        navigate('/login'); // Redirect if no token
+        navigate('/login');
         return;
       }
-      setIsInitialLoading(true); // Set initial loading to true
-      setOllamaError(null); // Clear previous errors
+      setIsInitialLoading(true);
+      setOllamaError(null);
       try {
-        // Fetch chat history
         const historyData = await api('/chat/history', {
           method: 'GET',
           token: token,
         });
         setMessages(historyData.messages);
 
-        // Fetch available models
         const modelsData = await api('/chat/models', {
           method: 'GET',
           token: token,
         });
         if (modelsData.models && modelsData.models.length > 0) {
           setAvailableModels(modelsData.models);
-          // Set default model to the first available if 'llama2' is not present
           if (!modelsData.models.includes('llama2')) {
             setSelectedModel(modelsData.models[0]);
           }
@@ -80,24 +75,23 @@ const Index = () => {
       } catch (error: any) {
         console.error('Error fetching data:', error);
         setOllamaError(error.message || 'Failed to load chat history or models. Check your backend connection and Ollama setup.');
-        // toast.error is handled by the api utility
       } finally {
-        setIsInitialLoading(false); // Set initial loading to false
+        setIsInitialLoading(false);
       }
     };
 
     fetchChatHistoryAndModels();
-  }, [token, navigate]); // Added navigate to dependency array
+  }, [token, navigate]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading || isInitialLoading) return; // Prevent sending if initial loading
+    if (!input.trim() || isLoading || isInitialLoading) return;
 
     const userMessage: Message = { sender: 'user', text: input.trim(), timestamp: new Date().toISOString() };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInput('');
     setIsLoading(true);
-    setOllamaError(null); // Clear Ollama error on new message attempt
+    setOllamaError(null);
 
     try {
       const response = await api('/chat/message', {
@@ -111,11 +105,11 @@ const Index = () => {
 
       const aiMessage: Message = { sender: 'ai', text: response.response, timestamp: new Date().toISOString() };
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    } catch (error: any) { // Explicitly type error as any to access message property
+    } catch (error: any) {
       console.error('Error sending message:', error);
       const errorMessage = error.message || 'Could not get a response.';
       setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: `Error: ${errorMessage}`, timestamp: new Date().toISOString() }]);
-      setOllamaError(`Failed to get response: ${errorMessage}`); // Set Ollama error for persistent display
+      setOllamaError(`Failed to get response: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -133,7 +127,6 @@ const Index = () => {
         toast.success('Chat history cleared successfully!');
       } catch (error) {
         console.error('Error clearing chat history:', error);
-        // toast.error is handled by the api utility
       } finally {
         setIsLoading(false);
       }
@@ -142,14 +135,8 @@ const Index = () => {
 
   const handleNewChat = () => {
     setMessages([]);
-    setOllamaError(null); // Clear Ollama error on new chat
+    setOllamaError(null);
     toast.info('Started a new chat session.');
-  };
-
-  const handleCopyMessage = (text: string) => {
-    navigator.clipboard.writeText(text)
-      .then(() => toast.success('Copied to clipboard!'))
-      .catch(() => toast.error('Failed to copy text.'));
   };
 
   return (
@@ -220,40 +207,12 @@ const Index = () => {
             </div>
           ) : (
             messages.map((msg, index) => (
-              <div
+              <ChatMessage
                 key={index}
-                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div
-                  className={`max-w-[80%] p-3 rounded-lg ${
-                    msg.sender === 'user'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
-                  }`}
-                >
-                  {msg.sender === 'user' ? (
-                    msg.text
-                  ) : (
-                    <div className="flex flex-col">
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {msg.text}
-                      </ReactMarkdown>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="self-end mt-2 h-auto p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        onClick={() => handleCopyMessage(msg.text)}
-                        title="Copy message"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-                <span className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-gray-600 dark:text-gray-400 mr-1' : 'text-gray-500 dark:text-gray-400 ml-1'}`}>
-                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on {new Date(msg.timestamp).toLocaleDateString()}
-                </span>
-              </div>
+                sender={msg.sender}
+                text={msg.text}
+                timestamp={msg.timestamp}
+              />
             ))
           )}
           {isLoading && messages.length > 0 && (
@@ -270,7 +229,7 @@ const Index = () => {
 
       <form onSubmit={handleSendMessage} className="flex space-x-2">
         <Input
-          ref={inputRef} // Attach the ref to the input
+          ref={inputRef}
           type="text"
           placeholder="Type your message..."
           value={input}
