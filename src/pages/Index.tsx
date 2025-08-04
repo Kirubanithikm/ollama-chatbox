@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Keep Input for now if needed elsewhere, but we'll use Textarea for chat
 import { Textarea } from "@/components/ui/textarea"; // Import Textarea
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/Auth/AuthContext";
 import { api } from "@/lib/api";
 import { useNavigate } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
