@@ -7,11 +7,11 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
-import AdminProtectedRoute from "./components/AdminProtectedRoute"; // Import AdminProtectedRoute
+import AdminProtectedRoute from "./components/AdminProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard";
 import UserProfilePage from "./pages/UserProfilePage";
 import { AuthProvider } from "./context/AuthContext";
-import Layout from "./components/Layout"; // Import the Layout component
+import Layout from "./components/Layout";
 
 const queryClient = new QueryClient();
 
@@ -27,7 +27,7 @@ const App = () => (
             
             {/* Protected Routes wrapped by Layout */}
             <Route element={<ProtectedRoute />}>
-              <Route element={<Layout />}> {/* Apply Layout here */}
+              <Route element={<Layout />}> {/* Layout now uses Outlet */}
                 <Route path="/" element={<Index />} />
                 <Route path="/profile" element={<UserProfilePage />} />
                 {/* Admin Protected Route */}
