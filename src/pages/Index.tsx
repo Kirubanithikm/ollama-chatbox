@@ -8,9 +8,11 @@ import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch"; // Import Switch
-import { Label } from "@/components/ui/label"; // Import Label
-import { useTheme } from "next-themes"; // Import useTheme
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useTheme } from "next-themes";
+import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
+import remarkGfm from 'remark-gfm'; // Import remarkGfm for GitHub Flavored Markdown
 
 interface Message {
   sender: 'user' | 'ai';
@@ -199,10 +201,16 @@ const Index = () => {
                     className={`max-w-[70%] p-3 rounded-lg ${
                       msg.sender === 'user'
                         ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert' // Added prose classes
                     }`}
                   >
-                    {msg.text}
+                    {msg.sender === 'user' ? (
+                      msg.text
+                    ) : (
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {msg.text}
+                      </ReactMarkdown>
+                    )}
                   </div>
                 </div>
               ))
