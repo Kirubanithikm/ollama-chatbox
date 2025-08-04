@@ -97,6 +97,9 @@ const Index = () => {
               <Button variant="outline">Admin Dashboard</Button>
             </Link>
           )}
+          <Link to="/profile"> {/* Add link to User Profile */}
+            <Button variant="outline">Profile</Button>
+          </Link>
           <Button onClick={handleLogout} variant="outline">
             Logout
           </Button>

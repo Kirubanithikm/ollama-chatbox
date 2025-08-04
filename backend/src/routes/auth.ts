@@ -1,6 +1,8 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
+import auth from '../middleware/auth'; // Import auth middleware
+import bcrypt from 'bcryptjs'; // Import bcrypt for password comparison/hashing
 
 const router = Router();
 
@@ -75,6 +77,55 @@ router.post('/login', async (req: Request, res: Response) => {
         res.json({ token, message: 'Logged in successfully' });
       }
     );
+  } catch (err: any) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// Get current user details (Protected)
+router.get('/me', auth, async (req: Request, res: Response) => {
+  try {
+    // req.user is set by the auth middleware
+    const user = await User.findById(req.user?.id).select('-password'); // Exclude password
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err: any) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
+
+// Update current user's password (Protected)
+router.put('/me/password', auth, async (req: Request, res: Response) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Current password and new password are required' });
+  }
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const isMatch = await user.comparePassword(currentPassword);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid current password' });
+    }
+
+    // The pre-save hook in the User model will hash the new password
+    user.password = newPassword; 
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
   } catch (err: any) {
     console.error(err.message);
     res.status(500).send('Server error');
