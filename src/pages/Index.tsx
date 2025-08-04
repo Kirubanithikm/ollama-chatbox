@@ -208,7 +208,7 @@ const Index = () => {
                   className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[70%] p-3 rounded-lg ${
+                    className={`max-w-[80%] p-3 rounded-lg ${ // Changed from 70% to 80%
                       msg.sender === 'user'
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
@@ -230,7 +230,7 @@ const Index = () => {
             )}
             {isLoading && messages.length > 0 && (
               <div className="flex justify-start">
-                <div className="max-w-[70%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                <div className="max-w-[80%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
                   Typing...
                 </div>
               </div>
