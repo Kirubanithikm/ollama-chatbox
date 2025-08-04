@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/context/AuthContext';
@@ -26,18 +26,17 @@ const SidebarLink = ({ to, icon: Icon, label, isActive }: SidebarLinkProps) => {
 
 const Sidebar = () => {
   const { user } = useAuth();
-  // You might want to use useLocation from react-router-dom to determine active link
-  // const location = useLocation();
-  // const isActive = (path: string) => location.pathname === path;
+  const location = useLocation(); // Use useLocation hook
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <aside className="hidden md:flex flex-col w-64 border-r bg-sidebar-background p-4 dark:bg-sidebar-background dark:border-sidebar-border">
       <div className="flex-1">
         <nav className="grid items-start gap-2">
-          <SidebarLink to="/" icon={MessageSquare} label="Chat" isActive={true} /> {/* Example active */}
-          <SidebarLink to="/profile" icon={User} label="Profile" />
+          <SidebarLink to="/" icon={MessageSquare} label="Chat" isActive={isActive('/')} /> {/* Dynamically set active */}
+          <SidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} /> {/* Dynamically set active */}
           {(user?.role === 'admin' || user?.role === 'super_admin') && (
-            <SidebarLink to="/admin" icon={Settings} label="Admin Dashboard" />
+            <SidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} /> {/* Dynamically set active */}
           )}
         </nav>
       </div>
