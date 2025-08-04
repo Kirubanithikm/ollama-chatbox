@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout'; // Import the new Layout component
+// import Layout from '@/components/Layout'; // Removed Layout import
 
 interface User {
   _id: string;
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <Layout> {/* Use the new Layout component */}
+    <> {/* Removed Layout component */}
       <Card className="w-full">
         <CardHeader>
           <CardTitle>User Management</CardTitle>
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
           </Table>
         </CardContent>
       </Card>
-    </Layout>
+    </>
   );
 };
 

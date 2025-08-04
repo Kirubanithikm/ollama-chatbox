@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-import Layout from '@/components/Layout'; // Import the new Layout component
+// import Layout from '@/components/Layout'; // Removed Layout import
 
 const UserProfilePage = () => {
   const { user, token } = useAuth();
@@ -59,7 +59,7 @@ const UserProfilePage = () => {
   }
 
   return (
-    <Layout> {/* Use the new Layout component */}
+    <> {/* Removed Layout component */}
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Your Profile</CardTitle>
@@ -118,7 +118,7 @@ const UserProfilePage = () => {
           </form>
         </CardContent>
       </Card>
-    </Layout>
+    </>
   );
 };
 

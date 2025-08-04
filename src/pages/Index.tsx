@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Loader2 } from "lucide-react";
-import Layout from "@/components/Layout"; // Import the new Layout component
+// import Layout from "@/components/Layout"; // Removed Layout import
 
 interface Message {
   sender: 'user' | 'ai';
@@ -138,7 +138,7 @@ const Index = () => {
   };
 
   return (
-    <Layout> {/* Use the new Layout component */}
+    <> {/* Removed Layout component */}
       <div className="flex justify-between items-center mb-4">
         <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
           <SelectTrigger className="w-[180px]">
@@ -236,7 +236,7 @@ const Index = () => {
           )}
         </Button>
       </form>
-    </Layout>
+    </>
   );
 };
 
