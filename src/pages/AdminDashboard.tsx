@@ -8,9 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { Switch } from "@/components/ui/switch"; // Import Switch
-import { Label } from "@/components/ui/label"; // Import Label
-import { useTheme } from "next-themes"; // Import useTheme
+import Header from '@/components/Header'; // Import the new Header component
 
 interface User {
   _id: string;
@@ -20,12 +18,11 @@ interface User {
 }
 
 const AdminDashboard = () => {
-  const { user, token, logout } = useAuth();
+  const { user, token } = useAuth(); // user and token are still needed for authorization and API calls
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { theme, setTheme } = useTheme(); // Use theme hook
 
   useEffect(() => {
     if (user?.role !== 'admin' && user?.role !== 'super_admin') {
@@ -92,11 +89,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
@@ -115,23 +107,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Admin Dashboard</h1>
-        <div className="flex items-center space-x-4">
-          <span className="text-gray-600 dark:text-gray-300">Logged in as {user?.username} ({user?.role})</span>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="dark-mode"
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
-          </div>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
-          </Button>
-        </div>
-      </header>
+      <Header /> {/* Use the new Header component */}
 
       <main className="flex-1 p-4 overflow-auto">
         <Card className="w-full">

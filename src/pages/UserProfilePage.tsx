@@ -8,17 +8,15 @@ import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { MadeWithDyad } from '@/components/made-with-dyad';
-import { Switch } from "@/components/ui/switch"; // Import Switch
-import { useTheme } from "next-themes"; // Import useTheme
+import Header from '@/components/Header'; // Import the new Header component
 
 const UserProfilePage = () => {
-  const { user, token, logout } = useAuth();
+  const { user, token } = useAuth(); // user and token are still needed for authorization and API calls
   const navigate = useNavigate();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const { theme, setTheme } = useTheme(); // Use theme hook
 
   useEffect(() => {
     if (!user) {
@@ -57,34 +55,13 @@ const UserProfilePage = () => {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
-
   if (!user) {
     return null; // Or a loading spinner, as useEffect will redirect
   }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">User Profile</h1>
-        <div className="flex items-center space-x-4">
-          <span className="text-gray-600 dark:text-gray-300">Logged in as {user.username} ({user.role})</span>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="dark-mode"
-              checked={theme === 'dark'}
-              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-            />
-            <Label htmlFor="dark-mode">Dark Mode</Label>
-          </div>
-          <Button onClick={handleLogout} variant="outline">
-            Logout
-          </Button>
-        </div>
-      </header>
+      <Header /> {/* Use the new Header component */}
 
       <main className="flex-1 p-4 overflow-auto flex justify-center items-start">
         <Card className="w-full max-w-md">
