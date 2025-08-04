@@ -222,7 +222,8 @@ const Index = () => {
           )}
           {isLoading && messages.length > 0 && (
             <div className="flex justify-start">
-              <div className="max-w-[80%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+              <div className="max-w-[80%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 flex items-center">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Typing...
               </div>
             </div>
