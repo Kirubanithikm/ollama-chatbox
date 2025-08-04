@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
-import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -17,18 +16,11 @@ interface User {
 
 const AdminDashboard = () => {
   const { user, token } = useAuth();
-  const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user?.role !== 'admin' && user?.role !== 'super_admin') {
-      toast.error('Access Denied: You do not have administrative privileges.');
-      navigate('/'); // Redirect to home if not authorized
-      return;
-    }
-
     const fetchUsers = async () => {
       try {
         setLoading(true);
@@ -46,7 +38,7 @@ const AdminDashboard = () => {
     };
 
     fetchUsers();
-  }, [user, token, navigate]);
+  }, [token]); // Only token is needed here, user role check is in AdminProtectedRoute
 
   const handleRoleChange = async (userId: string, newRole: 'user' | 'admin' | 'super_admin') => {
     if (user?.role !== 'super_admin') {

@@ -7,6 +7,7 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtectedRoute from "./components/AdminProtectedRoute"; // Import AdminProtectedRoute
 import AdminDashboard from "./pages/AdminDashboard";
 import UserProfilePage from "./pages/UserProfilePage";
 import { AuthProvider } from "./context/AuthContext";
@@ -28,8 +29,11 @@ const App = () => (
             <Route element={<ProtectedRoute />}>
               <Route element={<Layout />}> {/* Apply Layout here */}
                 <Route path="/" element={<Index />} />
-                <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/profile" element={<UserProfilePage />} />
+                {/* Admin Protected Route */}
+                <Route path="/admin" element={<AdminProtectedRoute />}>
+                  <Route index element={<AdminDashboard />} />
+                </Route>
                 {/* ADD ALL CUSTOM PROTECTED ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               </Route>
             </Route>
