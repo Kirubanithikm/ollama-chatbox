@@ -7,8 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { MadeWithDyad } from '@/components/made-with-dyad';
-import Header from '@/components/Header'; // Import the new Header component
+import Layout from '@/components/Layout'; // Import the new Layout component
 
 interface User {
   _id: string;
@@ -18,7 +17,7 @@ interface User {
 }
 
 const AdminDashboard = () => {
-  const { user, token } = useAuth(); // user and token are still needed for authorization and API calls
+  const { user, token } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,63 +105,58 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      <Header /> {/* Use the new Header component */}
-
-      <main className="flex-1 p-4 overflow-auto">
-        <Card className="w-full">
-          <CardHeader>
-            <CardTitle>User Management</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Username</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Registered On</TableHead>
-                  {user?.role === 'super_admin' && <TableHead className="text-right">Actions</TableHead>}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((u) => (
-                  <TableRow key={u._id}>
-                    <TableCell className="font-medium">{u.username}</TableCell>
-                    <TableCell>
-                      {user?.role === 'super_admin' ? (
-                        <Select value={u.role} onValueChange={(value: 'user' | 'admin' | 'super_admin') => handleRoleChange(u._id, value)}>
-                          <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Role" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="user">User</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                            <SelectItem value="super_admin">Super Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      ) : (
-                        u.role
+    <Layout> {/* Use the new Layout component */}
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>User Management</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Username</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Registered On</TableHead>
+                {user?.role === 'super_admin' && <TableHead className="text-right">Actions</TableHead>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((u) => (
+                <TableRow key={u._id}>
+                  <TableCell className="font-medium">{u.username}</TableCell>
+                  <TableCell>
+                    {user?.role === 'super_admin' ? (
+                      <Select value={u.role} onValueChange={(value: 'user' | 'admin' | 'super_admin') => handleRoleChange(u._id, value)}>
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select Role" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="super_admin">Super Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      u.role
+                    )}
+                  </TableCell>
+                  <TableCell>{new Date(u.createdAt).toLocaleDateString()}</TableCell>
+                  {user?.role === 'super_admin' && (
+                    <TableCell className="text-right">
+                      {u._id !== user.id && ( // Prevent super admin from deleting themselves
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u._id)}>
+                          Delete
+                        </Button>
                       )}
                     </TableCell>
-                    <TableCell>{new Date(u.createdAt).toLocaleDateString()}</TableCell>
-                    {user?.role === 'super_admin' && (
-                      <TableCell className="text-right">
-                        {u._id !== user.id && ( // Prevent super admin from deleting themselves
-                          <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u._id)}>
-                            Delete
-                          </Button>
-                        )}
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      </main>
-      <MadeWithDyad />
-    </div>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+    </Layout>
   );
 };
 

@@ -1,4 +1,3 @@
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -11,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Loader2 } from "lucide-react";
-import Header from "@/components/Header"; // Import the new Header component
+import Layout from "@/components/Layout"; // Import the new Layout component
 
 interface Message {
   sender: 'user' | 'ai';
@@ -20,8 +19,8 @@ interface Message {
 }
 
 const Index = () => {
-  const { token } = useAuth(); // Only need token here, user/logout handled by Header
-  const navigate = useNavigate(); // Still needed for potential redirects if token is missing
+  const { token } = useAuth();
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -139,111 +138,105 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      <Header /> {/* Use the new Header component */}
-
-      <main className="flex-1 flex flex-col p-4 overflow-hidden">
-        <div className="flex justify-between items-center mb-4">
-          <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select Model" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableModels.length > 0 ? (
-                availableModels.map((modelName) => (
-                  <SelectItem key={modelName} value={modelName}>
-                    {modelName}
-                  </SelectItem>
-                ))
-              ) : (
-                <SelectItem value="no-models" disabled>No models available</SelectItem>
-              )}
-            </SelectContent>
-          </Select>
-          <div className="space-x-2">
-            <Button variant="outline" onClick={handleNewChat} disabled={isLoading}>
-              New Chat
-            </Button>
-            <Button variant="destructive" onClick={handleClearChat} disabled={isLoading || messages.length === 0}>
-              Clear Chat
-            </Button>
-          </div>
-        </div>
-
-        <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">
-          <div className="flex flex-col space-y-4">
-            {isLoading && messages.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 mt-10">
-                <Loader2 className="h-8 w-8 animate-spin mb-2" />
-                <p>Loading chat history and models...</p>
-              </div>
-            ) : messages.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
-                Start a conversation with Ollama!
-              </div>
-            ) : (
-              messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] p-3 rounded-lg ${
-                      msg.sender === 'user'
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
-                    }`}
-                  >
-                    {msg.sender === 'user' ? (
-                      msg.text
-                    ) : (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {msg.text}
-                      </ReactMarkdown>
-                    )}
-                  </div>
-                  <span className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-gray-600 dark:text-gray-400 mr-1' : 'text-gray-500 dark:text-gray-400 ml-1'}`}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on {new Date(msg.timestamp).toLocaleDateString()}
-                  </span>
-                </div>
+    <Layout> {/* Use the new Layout component */}
+      <div className="flex justify-between items-center mb-4">
+        <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select Model" />
+          </SelectTrigger>
+          <SelectContent>
+            {availableModels.length > 0 ? (
+              availableModels.map((modelName) => (
+                <SelectItem key={modelName} value={modelName}>
+                  {modelName}
+                </SelectItem>
               ))
-            )}
-            {isLoading && messages.length > 0 && (
-              <div className="flex justify-start">
-                <div className="max-w-[80%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                  Typing...
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        </ScrollArea>
-
-        <form onSubmit={handleSendMessage} className="flex space-x-2">
-          <Input
-            ref={inputRef} // Attach the ref to the input
-            type="text"
-            placeholder="Type your message..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="flex-1"
-            disabled={isLoading || availableModels.length === 0}
-          />
-          <Button type="submit" disabled={isLoading || availableModels.length === 0}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Sending...
-              </>
             ) : (
-              "Send"
+              <SelectItem value="no-models" disabled>No models available</SelectItem>
             )}
+          </SelectContent>
+        </Select>
+        <div className="space-x-2">
+          <Button variant="outline" onClick={handleNewChat} disabled={isLoading}>
+            New Chat
           </Button>
-        </form>
-      </main>
+          <Button variant="destructive" onClick={handleClearChat} disabled={isLoading || messages.length === 0}>
+            Clear Chat
+          </Button>
+        </div>
+      </div>
 
-      <MadeWithDyad />
-    </div>
+      <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">
+        <div className="flex flex-col space-y-4">
+          {isLoading && messages.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 mt-10">
+              <Loader2 className="h-8 w-8 animate-spin mb-2" />
+              <p>Loading chat history and models...</p>
+            </div>
+          ) : messages.length === 0 ? (
+            <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
+              Start a conversation with Ollama!
+            </div>
+          ) : (
+            messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
+              >
+                <div
+                  className={`max-w-[80%] p-3 rounded-lg ${
+                    msg.sender === 'user'
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
+                  }`}
+                >
+                  {msg.sender === 'user' ? (
+                    msg.text
+                  ) : (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.text}
+                    </ReactMarkdown>
+                  )}
+                </div>
+                <span className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-gray-600 dark:text-gray-400 mr-1' : 'text-gray-500 dark:text-gray-400 ml-1'}`}>
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on {new Date(msg.timestamp).toLocaleDateString()}
+                </span>
+              </div>
+            ))
+          )}
+          {isLoading && messages.length > 0 && (
+            <div className="flex justify-start">
+              <div className="max-w-[80%] p-3 rounded-lg bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                Typing...
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
+
+      <form onSubmit={handleSendMessage} className="flex space-x-2">
+        <Input
+          ref={inputRef} // Attach the ref to the input
+          type="text"
+          placeholder="Type your message..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="flex-1"
+          disabled={isLoading || availableModels.length === 0}
+        />
+        <Button type="submit" disabled={isLoading || availableModels.length === 0}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sending...
+            </>
+          ) : (
+            "Send"
+          )}
+        </Button>
+      </form>
+    </Layout>
   );
 };
 
