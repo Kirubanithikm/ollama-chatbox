@@ -74,7 +74,16 @@ router.post('/login', async (req: Request, res: Response) => {
       { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;
-        res.json({ token, message: 'Logged in successfully' });
+        // Return user details along with the token
+        res.json({ 
+          token, 
+          message: 'Logged in successfully',
+          user: {
+            id: user.id,
+            username: user.username,
+            role: user.role,
+          }
+        });
       }
     );
   } catch (err: any) {

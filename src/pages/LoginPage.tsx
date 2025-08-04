@@ -22,12 +22,8 @@ const LoginPage = () => {
         body: JSON.stringify({ username, password }),
       });
       
-      // Assuming the backend returns { token: string, message: string }
-      // We need to decode the token to get user info (id, role)
-      // For simplicity, let's assume the backend also sends user info directly
-      // In a real app, you'd decode the JWT on the client or have a /me endpoint
-      const decodedUser = JSON.parse(atob(data.token.split('.')[1])); // Basic JWT decode for user info
-      login(data.token, { id: decodedUser.user.id, username: username, role: decodedUser.user.role });
+      // Use the user object directly from the API response
+      login(data.token, data.user);
       navigate('/'); // Redirect to home/dashboard after login
     } catch (error) {
       console.error('Login failed:', error);
