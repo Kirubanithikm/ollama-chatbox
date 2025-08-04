@@ -25,6 +25,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
+  const [ollamaError, setOllamaError] = useState<string | null>(null); // New state for Ollama specific errors
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null); // Ref for the input field
 
@@ -50,6 +51,7 @@ const Index = () => {
         return;
       }
       setIsLoading(true);
+      setOllamaError(null); // Clear previous errors
       try {
         // Fetch chat history
         const historyData = await api('/chat/history', {
@@ -70,10 +72,12 @@ const Index = () => {
             setSelectedModel(modelsData.models[0]);
           }
         } else {
+          setOllamaError('No Ollama models found. Please ensure Ollama is running and models are downloaded. Also, verify VITE_BACKEND_URL and OLLAMA_API_URL are set correctly in your .env files.');
           toast.info('No Ollama models found. Please ensure Ollama is running and models are downloaded.');
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching data:', error);
+        setOllamaError(error.message || 'Failed to load chat history or models. Check your backend connection and Ollama setup.');
         toast.error('Failed to load chat history or models.');
       } finally {
         setIsLoading(false);
@@ -91,6 +95,7 @@ const Index = () => {
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInput('');
     setIsLoading(true);
+    setOllamaError(null); // Clear Ollama error on new message attempt
 
     try {
       const response = await api('/chat/message', {
@@ -108,6 +113,7 @@ const Index = () => {
       console.error('Error sending message:', error);
       const errorMessage = error.message || 'Could not get a response.';
       setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: `Error: ${errorMessage}`, timestamp: new Date().toISOString() }]);
+      setOllamaError(`Failed to get response: ${errorMessage}`); // Set Ollama error for persistent display
     } finally {
       setIsLoading(false);
     }
@@ -134,6 +140,7 @@ const Index = () => {
 
   const handleNewChat = () => {
     setMessages([]);
+    setOllamaError(null); // Clear Ollama error on new chat
     toast.info('Started a new chat session.');
   };
 
@@ -146,7 +153,7 @@ const Index = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
+        <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading || availableModels.length === 0}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select Model" />
           </SelectTrigger>
@@ -178,6 +185,12 @@ const Index = () => {
             <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 mt-10">
               <Loader2 className="h-8 w-8 animate-spin mb-2" />
               <p>Loading chat history and models...</p>
+            </div>
+          ) : ollamaError ? (
+            <div className="text-center text-red-500 dark:text-red-400 mt-10 p-4 border border-red-300 dark:border-red-700 rounded-lg bg-red-50 dark:bg-red-900/20">
+              <p className="font-semibold mb-2">Ollama Connection Error:</p>
+              <p>{ollamaError}</p>
+              <p className="mt-2 text-sm">Please ensure Ollama is running and models are downloaded. Also, verify your backend's `.env` file has `OLLAMA_API_URL` set (e.g., `http://localhost:11434`) and your frontend's `.env` has `VITE_BACKEND_URL` set (e.g., `http://localhost:5000/api`).</p>
             </div>
           ) : messages.length === 0 ? (
             <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -241,9 +254,9 @@ const Index = () => {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="flex-1"
-          disabled={isLoading || availableModels.length === 0}
+          disabled={isLoading || availableModels.length === 0 || ollamaError !== null}
         />
-        <Button type="submit" disabled={isLoading || availableModels.length === 0}>
+        <Button type="submit" disabled={isLoading || availableModels.length === 0 || ollamaError !== null}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
