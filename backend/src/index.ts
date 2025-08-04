@@ -3,7 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import connectDB from './config/db';
 import authRoutes from './routes/auth';
-import chatRoutes from './routes/chat';
+import chatRoutes from './routes/chat'; // Import chat routes
+import auth from './middleware/auth'; // Import auth middleware
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ app.use(express.json()); // For parsing application/json
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/chat', auth, chatRoutes); // Protect chat routes with auth middleware
 
 app.get('/', (req, res) => {
   res.send('Ollama Chat Backend API is running!');
