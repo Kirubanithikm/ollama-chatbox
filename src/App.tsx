@@ -8,6 +8,7 @@ import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./pages/AdminDashboard"; // Import AdminDashboard
 import { AuthProvider } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             {/* Protected Routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Index />} />
+              <Route path="/admin" element={<AdminDashboard />} /> {/* Admin Dashboard Route */}
               {/* ADD ALL CUSTOM PROTECTED ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             </Route>
             

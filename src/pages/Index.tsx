@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom"; // Import Link
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -68,6 +68,11 @@ const Index = () => {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Ollama Chat</h1>
         <div className="flex items-center space-x-4">
           <span className="text-gray-600 dark:text-gray-300">Welcome, {user?.username}!</span>
+          {(user?.role === 'admin' || user?.role === 'super_admin') && (
+            <Link to="/admin">
+              <Button variant="outline">Admin Dashboard</Button>
+            </Link>
+          )}
           <Button onClick={handleLogout} variant="outline">
             Logout
           </Button>
