@@ -105,6 +105,25 @@ const Index = () => {
     }
   };
 
+  const handleClearChat = async () => {
+    if (window.confirm('Are you sure you want to clear your chat history? This action cannot be undone.')) {
+      try {
+        setIsLoading(true);
+        await api('/chat/history', {
+          method: 'DELETE',
+          token: token || undefined,
+        });
+        setMessages([]); // Clear messages from state
+        toast.success('Chat history cleared successfully!');
+      } catch (error) {
+        console.error('Error clearing chat history:', error);
+        toast.error('Failed to clear chat history.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
       <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
@@ -126,7 +145,7 @@ const Index = () => {
       </header>
 
       <main className="flex-1 flex flex-col p-4 overflow-hidden">
-        <div className="flex justify-end mb-4">
+        <div className="flex justify-between items-center mb-4"> {/* Adjusted for button */}
           <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Model" />
@@ -143,6 +162,9 @@ const Index = () => {
               )}
             </SelectContent>
           </Select>
+          <Button variant="destructive" onClick={handleClearChat} disabled={isLoading || messages.length === 0}>
+            Clear Chat
+          </Button>
         </div>
 
         <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">

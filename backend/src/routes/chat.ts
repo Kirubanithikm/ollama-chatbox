@@ -116,4 +116,24 @@ router.get('/models', auth, async (req: Request, res: Response) => {
   }
 });
 
+// Clear chat history route
+router.delete('/history', auth, async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+
+  try {
+    const result = await ChatSession.deleteOne({ userId });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No chat history found for this user.' });
+    }
+    res.json({ message: 'Chat history cleared successfully.' });
+  } catch (error: any) {
+    console.error('Error clearing chat history:', error.message);
+    res.status(500).json({ message: 'Failed to clear chat history.' });
+  }
+});
+
 export default router;
