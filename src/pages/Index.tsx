@@ -80,7 +80,7 @@ const Index = () => {
       } catch (error: any) {
         console.error('Error fetching data:', error);
         setOllamaError(error.message || 'Failed to load chat history or models. Check your backend connection and Ollama setup.');
-        toast.error('Failed to load chat history or models.');
+        // toast.error is handled by the api utility
       } finally {
         setIsInitialLoading(false); // Set initial loading to false
       }
@@ -133,7 +133,7 @@ const Index = () => {
         toast.success('Chat history cleared successfully!');
       } catch (error) {
         console.error('Error clearing chat history:', error);
-        toast.error('Failed to clear chat history.');
+        // toast.error is handled by the api utility
       } finally {
         setIsLoading(false);
       }
