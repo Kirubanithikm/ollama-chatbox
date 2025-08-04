@@ -10,7 +10,7 @@ const Layout = () => {
       <Header />
       <div className="flex flex-1">
         <Sidebar />
-        <main className="flex-1 p-4 overflow-auto bg-gray-100 dark:bg-gray-900">
+        <main className="flex-1 p-4 overflow-auto"> {/* Removed bg-gray-100 dark:bg-gray-900 */}
           <Outlet /> {/* Render nested routes here */}
         </main>
       </div>
