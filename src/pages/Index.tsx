@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"; // Keep Input for now if needed elsewhere, but we'll use Textarea for chat
+import { Textarea } from "@/components/ui/textarea"; // Import Textarea
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAuth } from "@/context/AuthContext";
 import { api } from "@/lib/api";
@@ -8,7 +9,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, ChevronDown, ChevronUp } from "lucide-react";
-import ChatMessage from "@/components/ChatMessage"; // Import the new ChatMessage component
+import ChatMessage from "@/components/ChatMessage";
 
 interface Message {
   sender: 'user' | 'ai';
@@ -28,7 +29,7 @@ const Index = () => {
   const [ollamaError, setOllamaError] = useState<string | null>(null);
   const [showOllamaErrorDetails, setShowOllamaErrorDetails] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null); // Change to HTMLTextAreaElement
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -228,14 +229,18 @@ const Index = () => {
       </ScrollArea>
 
       <form onSubmit={handleSendMessage} className="flex space-x-2">
-        <Input
+        <Textarea // Changed from Input to Textarea
           ref={inputRef}
-          type="text"
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-1"
+          className="flex-1 resize-none" // Added resize-none to prevent manual resizing
           disabled={isLoading || isInitialLoading || availableModels.length === 0 || ollamaError !== null}
+          rows={1} // Start with 1 row, will expand with content
+          onInput={(e) => { // Auto-resize textarea based on content
+            e.currentTarget.style.height = 'auto';
+            e.currentTarget.style.height = e.currentTarget.scrollHeight + 'px';
+          }}
         />
         <Button type="submit" disabled={isLoading || isInitialLoading || availableModels.length === 0 || ollamaError !== null}>
           {isLoading ? (
