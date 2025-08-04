@@ -42,7 +42,7 @@ const UserProfilePage = () => {
       setConfirmNewPassword('');
     } catch (error) {
       console.error('Failed to change password:', error);
-      // toast.error is handled by the api utility
+      // toast.error is handled by the api utility, so no need to call it here again.
     } finally {
       setLoading(false);
     }
