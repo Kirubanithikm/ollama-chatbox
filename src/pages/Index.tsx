@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Loader2 } from "lucide-react"; // Import Loader2 icon
+import { Loader2 } from "lucide-react";
 
 interface Message {
   sender: 'user' | 'ai';
@@ -30,7 +30,7 @@ const Index = () => {
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { theme, setTheme } = useTheme(); // Use theme hook
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -80,7 +80,7 @@ const Index = () => {
     };
 
     fetchChatHistoryAndModels();
-  }, [token]); // Fetch history and models when token changes (on login)
+  }, [token]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,7 +97,7 @@ const Index = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt: userMessage.text, model: selectedModel }), // Use selected model
+        body: JSON.stringify({ prompt: userMessage.text, model: selectedModel }),
         token: token || undefined,
       });
 
@@ -105,7 +105,6 @@ const Index = () => {
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
-      // The api utility already shows a toast for errors, so no need to duplicate
       setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: 'Error: Could not get a response.', timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
@@ -120,7 +119,7 @@ const Index = () => {
           method: 'DELETE',
           token: token || undefined,
         });
-        setMessages([]); // Clear messages from state
+        setMessages([]);
         toast.success('Chat history cleared successfully!');
       } catch (error) {
         console.error('Error clearing chat history:', error);
@@ -132,7 +131,7 @@ const Index = () => {
   };
 
   const handleNewChat = () => {
-    setMessages([]); // Clear messages from state for a new client-side chat
+    setMessages([]);
     toast.info('Started a new chat session.');
   };
 
@@ -206,7 +205,7 @@ const Index = () => {
               messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
                     className={`max-w-[70%] p-3 rounded-lg ${
@@ -223,6 +222,9 @@ const Index = () => {
                       </ReactMarkdown>
                     )}
                   </div>
+                  <span className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-gray-600 dark:text-gray-400 mr-1' : 'text-gray-500 dark:text-gray-400 ml-1'}`}>
+                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} on {new Date(msg.timestamp).toLocaleDateString()}
+                  </span>
                 </div>
               ))
             )}
