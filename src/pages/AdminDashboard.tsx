@@ -82,7 +82,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="flex items-center justify-center w-full h-full"> {/* Removed min-h-screen */}
         <p className="text-gray-600 dark:text-gray-300">Loading users...</p>
       </div>
     );
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
+      <div className="flex items-center justify-center w-full h-full"> {/* Removed min-h-screen */}
         <p className="text-red-500">Error: {error}</p>
       </div>
     );

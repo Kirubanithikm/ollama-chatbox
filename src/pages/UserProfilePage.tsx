@@ -54,7 +54,7 @@ const UserProfilePage = () => {
   // }
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-120px)]"> {/* Adjust height to fit within Layout's main */}
+    <div className="flex items-center justify-center w-full"> {/* Removed min-h-[calc(100vh-120px)] */}
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl text-center">Your Profile</CardTitle>
