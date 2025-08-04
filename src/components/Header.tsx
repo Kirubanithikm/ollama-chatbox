@@ -1,15 +1,12 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { useAuth } from '@/context/AuthContext';
-import { useTheme } from 'next-themes';
+import ThemeToggle from './ThemeToggle'; // Import the new ThemeToggle component
 
 const Header = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
     logout();
@@ -29,14 +26,7 @@ const Header = () => {
         <Link to="/profile">
           <Button variant="outline">Profile</Button>
         </Link>
-        <div className="flex items-center space-x-2">
-          <Switch
-            id="dark-mode"
-            checked={theme === 'dark'}
-            onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
-          />
-          <Label htmlFor="dark-mode">Dark Mode</Label>
-        </div>
+        <ThemeToggle /> {/* Use the new ThemeToggle component here */}
         <Button onClick={handleLogout} variant="outline">
           Logout
         </Button>
