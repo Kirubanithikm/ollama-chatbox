@@ -30,6 +30,7 @@ const Index = () => {
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null); // Ref for the input field
   const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
@@ -44,6 +45,13 @@ const Index = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Effect to focus the input field
+  useEffect(() => {
+    if (inputRef.current && !isLoading) {
+      inputRef.current.focus();
+    }
+  }, [isLoading, messages]); // Focus when loading stops or messages change (after sending)
 
   useEffect(() => {
     const fetchChatHistoryAndModels = async () => {
@@ -242,6 +250,7 @@ const Index = () => {
 
         <form onSubmit={handleSendMessage} className="flex space-x-2">
           <Input
+            ref={inputRef} // Attach the ref to the input
             type="text"
             placeholder="Type your message..."
             value={input}
