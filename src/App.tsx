@@ -17,8 +17,7 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      {/* Removed shadcn/ui Toaster */}
-      <Sonner /> {/* This is the sonner Toaster */}
+      <Sonner />
       <BrowserRouter>
         <AuthProvider>
           <Routes>
