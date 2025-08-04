@@ -6,12 +6,14 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
+import { useAuth } from '@/context/AuthContext'; // Import useAuth
 
 const RegisterPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
+  const { login } = useAuth(); // Get the login function from AuthContext
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,12 +22,15 @@ const RegisterPage = () => {
       return;
     }
     try {
-      await api('/auth/register', {
+      const data = await api('/auth/register', { // Capture the response data
         method: 'POST',
         body: JSON.stringify({ username, password }),
       });
-      toast.success('Registration successful! Please log in.');
-      navigate('/login');
+      
+      // Automatically log in the user with the received token and user data
+      login(data.token, data.user);
+      toast.success('Registration successful! You are now logged in.');
+      navigate('/'); // Redirect to home/dashboard after registration and login
     } catch (error) {
       console.error('Registration failed:', error);
       // toast.error is handled by the api utility
