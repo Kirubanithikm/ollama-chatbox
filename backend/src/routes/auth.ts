@@ -50,7 +50,7 @@ router.post('/register', async (req: Request, res: Response) => {
     );
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error during registration' }); // Standardized error response
   }
 });
 
@@ -96,7 +96,7 @@ router.post('/login', async (req: Request, res: Response) => {
     );
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error during login' }); // Standardized error response
   }
 });
 
@@ -111,7 +111,7 @@ router.get('/me', auth, async (req: Request, res: Response) => {
     res.json(user);
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error fetching user details' }); // Standardized error response
   }
 });
 
@@ -145,7 +145,7 @@ router.put('/me/password', auth, async (req: Request, res: Response) => {
     res.json({ message: 'Password updated successfully' });
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error updating password' }); // Standardized error response
   }
 });
 
