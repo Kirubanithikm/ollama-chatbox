@@ -11,8 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
-import ReactMarkdown from 'react-markdown'; // Import ReactMarkdown
-import remarkGfm from 'remark-gfm'; // Import remarkGfm for GitHub Flavored Markdown
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   sender: 'user' | 'ai';
@@ -130,6 +130,11 @@ const Index = () => {
     }
   };
 
+  const handleNewChat = () => {
+    setMessages([]); // Clear messages from state for a new client-side chat
+    toast.info('Started a new chat session.');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
       <header className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 shadow-md">
@@ -176,9 +181,14 @@ const Index = () => {
               )}
             </SelectContent>
           </Select>
-          <Button variant="destructive" onClick={handleClearChat} disabled={isLoading || messages.length === 0}>
-            Clear Chat
-          </Button>
+          <div className="space-x-2">
+            <Button variant="outline" onClick={handleNewChat} disabled={isLoading}>
+              New Chat
+            </Button>
+            <Button variant="destructive" onClick={handleClearChat} disabled={isLoading || messages.length === 0}>
+              Clear Chat
+            </Button>
+          </div>
         </div>
 
         <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">
@@ -201,7 +211,7 @@ const Index = () => {
                     className={`max-w-[70%] p-3 rounded-lg ${
                       msg.sender === 'user'
                         ? 'bg-blue-500 text-white'
-                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert' // Added prose classes
+                        : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
                     }`}
                   >
                     {msg.sender === 'user' ? (
