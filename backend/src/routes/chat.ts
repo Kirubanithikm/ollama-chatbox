@@ -17,19 +17,17 @@ interface ChatRequest extends Request {
   };
 }
 
-// Ensure OLLAMA_API_URL is set
+// OLLAMA_API_URL is now checked within the routes, not at startup
 const OLLAMA_API_URL = process.env.OLLAMA_API_URL;
-if (!OLLAMA_API_URL) {
-  console.error('OLLAMA_API_URL is not defined in environment variables. Please set it.');
-  // In a real application, you might want to exit the process or disable chat functionality
-  // For now, we'll let it throw an error on startup if not set.
-  throw new Error('OLLAMA_API_URL is not defined in environment variables');
-}
 
 // Chat message route
 router.post('/message', auth, async (req: ChatRequest, res: Response) => {
   const { model, prompt } = req.body;
   const userId = req.user?.id;
+
+  if (!OLLAMA_API_URL) {
+    return res.status(500).json({ message: 'Ollama API URL is not configured. Please set OLLAMA_API_URL in your environment variables.' });
+  }
 
   if (!prompt) {
     return res.status(400).json({ message: 'Prompt is required' });
@@ -105,6 +103,9 @@ router.get('/history', auth, async (req: Request, res: Response) => {
 
 // Get available Ollama models
 router.get('/models', auth, async (req: Request, res: Response) => {
+  if (!OLLAMA_API_URL) {
+    return res.status(500).json({ message: 'Ollama API URL is not configured. Please set OLLAMA_API_URL in your environment variables.' });
+  }
   try {
     const response = await fetch(`${OLLAMA_API_URL}/api/tags`);
     if (!response.ok) {
