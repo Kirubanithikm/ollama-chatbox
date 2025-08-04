@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
-// import Layout from '@/components/Layout'; // Removed Layout import
 
 const UserProfilePage = () => {
   const { user, token } = useAuth();
@@ -59,66 +58,64 @@ const UserProfilePage = () => {
   }
 
   return (
-    <> {/* Removed Layout component */}
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Your Profile</CardTitle>
-          <CardDescription className="text-center">
-            View your details and manage your account.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label>Username</Label>
-            <Input type="text" value={user.username} readOnly className="bg-gray-50 dark:bg-gray-700" />
-          </div>
-          <div className="space-y-2">
-            <Label>Role</Label>
-            <Input type="text" value={user.role} readOnly className="bg-gray-50 dark:bg-gray-700" />
-          </div>
+    <Card className="w-full max-w-md">
+      <CardHeader className="space-y-1">
+        <CardTitle className="text-2xl text-center">Your Profile</CardTitle>
+        <CardDescription className="text-center">
+          View your details and manage your account.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="space-y-2">
+          <Label>Username</Label>
+          <Input type="text" value={user.username} readOnly className="bg-gray-50 dark:bg-gray-700" />
+        </div>
+        <div className="space-y-2">
+          <Label>Role</Label>
+          <Input type="text" value={user.role} readOnly className="bg-gray-50 dark:bg-gray-700" />
+        </div>
 
-          <form onSubmit={handleChangePassword} className="space-y-4 border-t pt-4 mt-4">
-            <h3 className="text-lg font-semibold">Change Password</h3>
-            <div className="space-y-2">
-              <Label htmlFor="current-password">Current Password</Label>
-              <Input
-                id="current-password"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-new-password">Confirm New Password</Label>
-              <Input
-                id="confirm-new-password"
-                type="password"
-                value={confirmNewPassword}
-                onChange={(e) => setConfirmNewPassword(e.target.value)}
-                required
-                disabled={loading}
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Updating...' : 'Change Password'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </>
+        <form onSubmit={handleChangePassword} className="space-y-4 border-t pt-4 mt-4">
+          <h3 className="text-lg font-semibold">Change Password</h3>
+          <div className="space-y-2">
+            <Label htmlFor="current-password">Current Password</Label>
+            <Input
+              id="current-password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="new-password">New Password</Label>
+            <Input
+              id="new-password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirm-new-password">Confirm New Password</Label>
+            <Input
+              id="confirm-new-password"
+              type="password"
+              value={confirmNewPassword}
+              onChange={(e) => setConfirmNewPassword(e.target.value)}
+              required
+              disabled={loading}
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? 'Updating...' : 'Change Password'}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };
 

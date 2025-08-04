@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-// import Layout from '@/components/Layout'; // Removed Layout import
 
 interface User {
   _id: string;
@@ -105,58 +104,56 @@ const AdminDashboard = () => {
   }
 
   return (
-    <> {/* Removed Layout component */}
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle>User Management</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Username</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Registered On</TableHead>
-                {user?.role === 'super_admin' && <TableHead className="text-right">Actions</TableHead>}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((u) => (
-                <TableRow key={u._id}>
-                  <TableCell className="font-medium">{u.username}</TableCell>
-                  <TableCell>
-                    {user?.role === 'super_admin' ? (
-                      <Select value={u.role} onValueChange={(value: 'user' | 'admin' | 'super_admin') => handleRoleChange(u._id, value)}>
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select Role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="user">User</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="super_admin">Super Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      u.role
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>User Management</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Username</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Registered On</TableHead>
+              {user?.role === 'super_admin' && <TableHead className="text-right">Actions</TableHead>}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {users.map((u) => (
+              <TableRow key={u._id}>
+                <TableCell className="font-medium">{u.username}</TableCell>
+                <TableCell>
+                  {user?.role === 'super_admin' ? (
+                    <Select value={u.role} onValueChange={(value: 'user' | 'admin' | 'super_admin') => handleRoleChange(u._id, value)}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select Role" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="super_admin">Super Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    u.role
+                  )}
+                </TableCell>
+                <TableCell>{new Date(u.createdAt).toLocaleDateString()}</TableCell>
+                {user?.role === 'super_admin' && (
+                  <TableCell className="text-right">
+                    {u._id !== user.id && ( // Prevent super admin from deleting themselves
+                      <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u._id)}>
+                        Delete
+                      </Button>
                     )}
                   </TableCell>
-                  <TableCell>{new Date(u.createdAt).toLocaleDateString()}</TableCell>
-                  {user?.role === 'super_admin' && (
-                    <TableCell className="text-right">
-                      {u._id !== user.id && ( // Prevent super admin from deleting themselves
-                        <Button variant="destructive" size="sm" onClick={() => handleDeleteUser(u._id)}>
-                          Delete
-                        </Button>
-                      )}
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
-    </>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 };
 
