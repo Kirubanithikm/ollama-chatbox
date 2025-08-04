@@ -12,7 +12,7 @@ router.get('/users', auth, authorize(['admin', 'super_admin']), async (req: Requ
     res.json(users);
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error fetching users' }); // Standardized error response
   }
 });
 
@@ -36,7 +36,7 @@ router.put('/users/:id/role', auth, authorize(['super_admin']), async (req: Requ
     res.json({ message: 'User role updated successfully', user: user.username, newRole: user.role });
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error updating user role' }); // Standardized error response
   }
 });
 
@@ -52,7 +52,7 @@ router.delete('/users/:id', auth, authorize(['super_admin']), async (req: Reques
     res.json({ message: 'User deleted successfully', user: user.username });
   } catch (err: any) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: 'Server error deleting user' }); // Standardized error response
   }
 });
 
