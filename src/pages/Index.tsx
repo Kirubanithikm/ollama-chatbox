@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { useTheme } from "next-themes";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Loader2 } from "lucide-react"; // Import Loader2 icon
 
 interface Message {
   sender: 'user' | 'ai';
@@ -246,7 +247,14 @@ const Index = () => {
             disabled={isLoading || availableModels.length === 0}
           />
           <Button type="submit" disabled={isLoading || availableModels.length === 0}>
-            Send
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Sending...
+              </>
+            ) : (
+              "Send"
+            )}
           </Button>
         </form>
       </main>
