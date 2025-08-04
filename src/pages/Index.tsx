@@ -194,8 +194,9 @@ const Index = () => {
         <ScrollArea className="flex-1 p-4 border rounded-lg bg-white dark:bg-gray-800 shadow-inner mb-4">
           <div className="flex flex-col space-y-4">
             {isLoading && messages.length === 0 ? (
-              <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
-                Loading chat history and models...
+              <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 mt-10">
+                <Loader2 className="h-8 w-8 animate-spin mb-2" />
+                <p>Loading chat history and models...</p>
               </div>
             ) : messages.length === 0 ? (
               <div className="text-center text-gray-500 dark:text-gray-400 mt-10">
@@ -208,7 +209,7 @@ const Index = () => {
                   className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] p-3 rounded-lg ${ // Changed from 70% to 80%
+                    className={`max-w-[80%] p-3 rounded-lg ${
                       msg.sender === 'user'
                         ? 'bg-blue-500 text-white'
                         : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200 prose dark:prose-invert'
