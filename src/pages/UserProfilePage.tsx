@@ -8,6 +8,8 @@ import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { toast } from 'sonner';
 import { MadeWithDyad } from '@/components/made-with-dyad';
+import { Switch } from "@/components/ui/switch"; // Import Switch
+import { useTheme } from "next-themes"; // Import useTheme
 
 const UserProfilePage = () => {
   const { user, token, logout } = useAuth();
@@ -16,6 +18,7 @@ const UserProfilePage = () => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { theme, setTheme } = useTheme(); // Use theme hook
 
   useEffect(() => {
     if (!user) {
@@ -69,6 +72,14 @@ const UserProfilePage = () => {
         <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">User Profile</h1>
         <div className="flex items-center space-x-4">
           <span className="text-gray-600 dark:text-gray-300">Logged in as {user.username} ({user.role})</span>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="dark-mode"
+              checked={theme === 'dark'}
+              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+            />
+            <Label htmlFor="dark-mode">Dark Mode</Label>
+          </div>
           <Button onClick={handleLogout} variant="outline">
             Logout
           </Button>

@@ -8,6 +8,9 @@ import { useNavigate, Link } from "react-router-dom";
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch"; // Import Switch
+import { Label } from "@/components/ui/label"; // Import Label
+import { useTheme } from "next-themes"; // Import useTheme
 
 interface Message {
   sender: 'user' | 'ai';
@@ -24,6 +27,7 @@ const Index = () => {
   const [availableModels, setAvailableModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>('llama2'); // Default model
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { theme, setTheme } = useTheme(); // Use theme hook
 
   const handleLogout = () => {
     logout();
@@ -138,6 +142,14 @@ const Index = () => {
           <Link to="/profile">
             <Button variant="outline">Profile</Button>
           </Link>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="dark-mode"
+              checked={theme === 'dark'}
+              onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+            />
+            <Label htmlFor="dark-mode">Dark Mode</Label>
+          </div>
           <Button onClick={handleLogout} variant="outline">
             Logout
           </Button>
@@ -145,7 +157,7 @@ const Index = () => {
       </header>
 
       <main className="flex-1 flex flex-col p-4 overflow-hidden">
-        <div className="flex justify-between items-center mb-4"> {/* Adjusted for button */}
+        <div className="flex justify-between items-center mb-4">
           <Select value={selectedModel} onValueChange={setSelectedModel} disabled={isLoading}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select Model" />
