@@ -104,9 +104,10 @@ const Index = () => {
 
       const aiMessage: Message = { sender: 'ai', text: response.response, timestamp: new Date().toISOString() };
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
-    } catch (error) {
+    } catch (error: any) { // Explicitly type error as any to access message property
       console.error('Error sending message:', error);
-      setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: 'Error: Could not get a response.', timestamp: new Date().toISOString() }]);
+      const errorMessage = error.message || 'Could not get a response.';
+      setMessages((prevMessages) => [...prevMessages, { sender: 'ai', text: `Error: ${errorMessage}`, timestamp: new Date().toISOString() }]);
     } finally {
       setIsLoading(false);
     }
