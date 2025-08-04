@@ -74,7 +74,7 @@ const Index = () => {
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        // The api utility already handles toast.error, so no need to duplicate here.
+        toast.error('Failed to load chat history or models.');
       } finally {
         setIsLoading(false);
       }
@@ -124,7 +124,7 @@ const Index = () => {
         toast.success('Chat history cleared successfully!');
       } catch (error) {
         console.error('Error clearing chat history:', error);
-        // The api utility already handles toast.error, so no need to duplicate here.
+        toast.error('Failed to clear chat history.');
       } finally {
         setIsLoading(false);
       }
