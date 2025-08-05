@@ -3,7 +3,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
 import { MessageSquare, User, Settings, Menu } from 'lucide-react';
 import {
   Sheet,
@@ -20,7 +19,7 @@ interface MobileSidebarLinkProps {
   icon: React.ElementType;
   label: string;
   isActive?: boolean;
-  onLinkClick: () => void; // Callback to close the sheet
+  onLinkClick: () => void;
 }
 
 const MobileSidebarLink = ({ to, icon: Icon, label, isActive, onLinkClick }: MobileSidebarLinkProps) => {
@@ -38,13 +37,13 @@ const MobileSidebarLink = ({ to, icon: Icon, label, isActive, onLinkClick }: Mob
 };
 
 const MobileSidebar = () => {
-  const { user } = useAuth();
+  // Removed useAuth
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [isOpen, setIsOpen] = React.useState(false);
 
   const handleLinkClick = () => {
-    setIsOpen(false); // Close the sheet when a link is clicked
+    setIsOpen(false);
   };
 
   return (
@@ -61,13 +60,15 @@ const MobileSidebar = () => {
         </SheetHeader>
         <nav className="grid items-start gap-2 mt-4 flex-1">
           <MobileSidebarLink to="/" icon={MessageSquare} label="Chat" isActive={isActive('/')} onLinkClick={handleLinkClick} />
-          <MobileSidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} onLinkClick={handleLinkClick} />
+          {/* Temporarily removed Profile and Admin Dashboard links */}
+          {/* <MobileSidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} onLinkClick={handleLinkClick} />
           {(user?.role === 'admin' || user?.role === 'super_admin') && (
             <MobileSidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} onLinkClick={handleLinkClick} />
-          )}
+          )} */}
         </nav>
         <div className="mt-auto p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-          Welcome, {user?.username}!
+          {/* Temporarily removed user welcome */}
+          Welcome!
         </div>
       </SheetContent>
     </Sheet>
