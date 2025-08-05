@@ -13,6 +13,7 @@ import {
   SheetClose,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/context/AuthContext';
 
 interface MobileSidebarLinkProps {
   to: string;
@@ -37,7 +38,7 @@ const MobileSidebarLink = ({ to, icon: Icon, label, isActive, onLinkClick }: Mob
 };
 
 const MobileSidebar = () => {
-  // Removed useAuth
+  const { user } = useAuth();
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
   const [isOpen, setIsOpen] = React.useState(false);
@@ -60,15 +61,18 @@ const MobileSidebar = () => {
         </SheetHeader>
         <nav className="grid items-start gap-2 mt-4 flex-1">
           <MobileSidebarLink to="/" icon={MessageSquare} label="Chat" isActive={isActive('/')} onLinkClick={handleLinkClick} />
-          {/* Temporarily removed Profile and Admin Dashboard links */}
-          {/* <MobileSidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} onLinkClick={handleLinkClick} />
-          {(user?.role === 'admin' || user?.role === 'super_admin') && (
-            <MobileSidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} onLinkClick={handleLinkClick} />
-          )} */}
+          {user && (
+            <>
+              {/* Placeholder for Profile and Admin Dashboard links */}
+              {/* <MobileSidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} onLinkClick={handleLinkClick} /> */}
+              {/* {(user?.role === 'admin' || user?.role === 'super_admin') && (
+                <MobileSidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} onLinkClick={handleLinkClick} />
+              )} */}
+            </>
+          )}
         </nav>
         <div className="mt-auto p-4 text-center text-sm text-gray-500 dark:text-gray-400">
-          {/* Temporarily removed user welcome */}
-          Welcome!
+          {user ? `Welcome, ${user.email}!` : 'Welcome!'}
         </div>
       </SheetContent>
     </Sheet>

@@ -4,6 +4,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { MessageSquare, User, Settings } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 interface SidebarLinkProps {
   to: string;
@@ -25,7 +26,7 @@ const SidebarLink = ({ to, icon: Icon, label, isActive }: SidebarLinkProps) => {
 };
 
 const Sidebar = () => {
-  // Removed useAuth
+  const { user } = useAuth();
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
 
@@ -34,11 +35,15 @@ const Sidebar = () => {
       <div className="flex-1">
         <nav className="grid items-start gap-2">
           <SidebarLink to="/" icon={MessageSquare} label="Chat" isActive={isActive('/')} />
-          {/* Temporarily removed Profile and Admin Dashboard links */}
-          {/* <SidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} />
-          {(user?.role === 'admin' || user?.role === 'super_admin') && (
-            <SidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} />
-          )} */}
+          {user && (
+            <>
+              {/* Placeholder for Profile and Admin Dashboard links */}
+              {/* <SidebarLink to="/profile" icon={User} label="Profile" isActive={isActive('/profile')} /> */}
+              {/* {(user?.role === 'admin' || user?.role === 'super_admin') && (
+                <SidebarLink to="/admin" icon={Settings} label="Admin Dashboard" isActive={isActive('/admin')} />
+              )} */}
+            </>
+          )}
         </nav>
       </div>
     </aside>
